@@ -1,21 +1,12 @@
 <?php
     //values for example
     declare(strict_types=1);
-    $strandA = "AGTACGTA";
-    $strandB = "CGTCCTTA";
-    function distance(string $strandA, string $strandB): int
+    
+    $date = "2023-05-27 11:30:00";
+    function from(DateTimeImmutable $date): DateTimeImmutable
     {
-        $distance =  0;
-        if (strlen($strandA) !== strlen($strandB)) {
-            throw new InvalidArgumentException('DNA strands must be of equal length.');
-        }
-        for ($i=0; $i < strlen($strandA) ; $i++) { 
-            if ($strandA[$i] !== $strandB[$i]) {
-                $distance++;
-            }
-        };
-        return $distance;
-    }; 
-
-    echo distance($strandA, $strandB);
+        return $date->modify('+1000000000 seconds');
+    }
+    //this code works on the exercism page
+    
 ?>
