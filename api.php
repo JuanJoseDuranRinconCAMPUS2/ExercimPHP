@@ -1,17 +1,21 @@
 <?php
+    //values for example
     declare(strict_types=1);
-    //ejemplo
-    $color = "black"
-    //ejemplo
-    const COLORS = [
-            "black", "brown", "red", "orange", "yellow",
-            "green", "blue", "violet", "grey", "white"
-        ];
-
-    //el ejercicio obliga usar el const pero es mas recomendable usar el define()
-    function colorCode(string $color): int
+    $strandA = "AGTACGTA";
+    $strandB = "CGTCCTTA";
+    function distance(string $strandA, string $strandB): int
     {
-        $indice = array_search($color, COLORS);
-        return $indice;
-    }
+        $distance =  0;
+        if (strlen($strandA) !== strlen($strandB)) {
+            throw new InvalidArgumentException('DNA strands must be of equal length.');
+        }
+        for ($i=0; $i < strlen($strandA) ; $i++) { 
+            if ($strandA[$i] !== $strandB[$i]) {
+                $distance++;
+            }
+        };
+        return $distance;
+    }; 
+
+    echo distance($strandA, $strandB);
 ?>
