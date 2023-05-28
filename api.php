@@ -3,112 +3,63 @@
     declare(strict_types=1);
 
     
-class Tournament
-{
-    private $teams = [];
-    public function tally($scores)
+    class SimpleCipher
     {
-        if ($scores) {
-            $games = explode("\n", $scores);
-            
-            foreach ($games as $game) {
-                $gameResult = explode(';', $game);
-                switch ($gameResult[2]) {
-                    case 'win':
-                        $this->getTeam($gameResult[0])->addWin();
-                        $this->getTeam($gameResult[1])->addLost();
-                        break;
-                    case 'loss':
-                        $this->getTeam($gameResult[0])->addLost();
-                        $this->getTeam($gameResult[1])->addWin();
-                        break;
-                    case 'draw':
-                        $this->getTeam($gameResult[0])->addTied();
-                        $this->getTeam($gameResult[1])->addTied();
-                        break;
-                }
+        public string $key;
+
+        public function __construct(string $key = null)
+            {
+            if ($key === '') {
+                throw new InvalidArgumentException('Key must not be empty');
             }
-    
-            usort($this->teams, function($teamA, $teamB) {
-                if ($teamA->getPoints() == $teamB->getPoints()) {
-                    return strcmp($teamA->getName(), $teamB->getName());
-                }
-                return ($teamA->getPoints() < $teamB->getPoints()) ? 1 : -1;
-            });        
-        }
-        
-        return $this->renderTable();
-    }
-    private function renderTable()
+
+            $key = $key ?? $this->getRandomKey();
+
+            if (!ctype_lower($key)) {
+                throw new InvalidArgumentException('Key must be lowercase alphabets only');
+            }
+
+            $this->key = $key;
+            }
+
+    private function getRandomKey(): string
     {
-        $result = sprintf("%-31s| MP |  W |  D |  L |  P", "Team");
-        foreach ($this->teams as $team) {
-            $result .= "\n";
-            $result .= sprintf("%-31s| %2s | %2s | %2s | %2s | %2s", $team->getName(), $team->getMatches(), $team->getWins(), $team->getTieds(), $team->getLosts(), $team->getPoints());
+        $chars = range('a', 'z');
+        $key = '';
+        for ($i = 0; $i < 80; $i++) {
+            $key .= $chars[random_int(0, 25)];
         }
-        return $result;
+        return $key;
     }
-    private function getTeam($name)
+
+    public function encode(string $plainText): string
     {
-        if (isset($this->teams[$name])) {
-            $team = $this->teams[$name];
-        } else {
-            $team = new Team($name);
-            $this->teams[$name] = $team;
+        $encoded = '';
+        $keyLen = strlen($this->key);
+
+        foreach (str_split($plainText) as $i => $operation) { //the text is transformed into an array
+            $key = ord($this->key[$i % $keyLen]) - ord('a');
+            $operation = (ord($operation) - ord('a') + $key) % 26 + ord('a');
+            //calculates the offset required for each character in the text based on the corresponding character in the key. The offset is calculated by subtracting the numeric value of 'a' from the numeric value of the key character.
+            $encoded .= chr($operation);
         }
-        return $team;
+
+        return $encoded;
+    }
+
+    public function decode(string $cipherText): string
+    {
+        $decoded = '';
+        $keyLen = strlen($this->key);
+
+        foreach (str_split($cipherText) as $i => $operation) {
+            $key = ord($this->key[$i % $keyLen]) - ord('a');
+            $operation = (ord($operation) - ord('a') - $key + 26) % 26 + ord('a');
+            $decoded .= chr($operation);
+        }
+
+        return $decoded;
     }
 }
-class Team
-{
-    private $name;
-    private $wins = 0;
-    private $tieds = 0;
-    private $losts = 0;
-    private $matches = 0;
-    public function __construct($name)
-    {
-        $this->name = $name;
-    }
-    public function addWin()
-    {
-        $this->wins++;
-        $this->matches++;
-    }
-    public function addTied()
-    {
-        $this->tieds++;
-        $this->matches++;
-    }
-    public function addLost()
-    {
-        $this->losts++;
-        $this->matches++;
-    }
-    public function getPoints()
-    {
-        return $this->wins * 3 + $this->tieds;
-    }
-    public function getName()
-    {
-        return $this->name;
-    }
-    public function getWins()
-    {
-        return $this->wins;
-    }
-    public function getTieds()
-    {
-        return $this->tieds;
-    }
-    public function getLosts()
-    {
-        return $this->losts;
-    }
-    public function getMatches()
-    {
-        return $this->matches;
-    }
-}
-        
+     
 ?>
