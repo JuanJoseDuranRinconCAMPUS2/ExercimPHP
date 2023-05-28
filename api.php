@@ -1,26 +1,33 @@
 <?php
     //values for example
     declare(strict_types=1);
-    class HighScores
+    class Bob
+{
+    public function respondTo(string $str): string
     {
-        public $scores;
-        public $personalBest;
-        public $latest;
-        public $personalTopThree;
+        $str = trim($str);
 
-        public function __construct(array $scores)
-        {       
-            $this->scores = $scores;
-            $this->processOperations();
+        if (empty($str)) {
+            return "Fine. Be that way!";
+        } elseif ($this->isQuestion($str) && $this->isYelling($str)) {
+            return "Calm down, I know what I'm doing!";
+        } elseif ($this->isQuestion($str)) {
+            return "Sure.";
+        } elseif ($this->isYelling($str)) {
+            return "Whoa, chill out!";
         }
 
-        public function processOperations(): void{
-            $this->latest = end($this->scores);
-            $sortedScores = $this->scores;
-            rsort($sortedScores);
-            $this->personalBest = $sortedScores[0];
-            $this->personalTopThree = array_slice($sortedScores, 0, 3);
-        }
-    
+        return "Whatever.";
     }
+
+    private function isQuestion(string $str): bool
+    {
+        return substr($str, -1) === "?";
+    }
+
+    private function isYelling(string $str): bool
+    {
+        return $str === strtoupper($str) && preg_match("/[a-zA-Z]/", $str);
+    }
+}
 ?>
