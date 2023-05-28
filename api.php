@@ -2,11 +2,28 @@
     //values for example
     declare(strict_types=1);
 
-    function isIsogram(string $word): bool
-    {
-        $word = str_replace([' ', '-'], '', $word);
-        $word = mb_strtolower($word, 'UTF-8');
-        return count(array_unique(mb_str_split($word))) === mb_strlen($word);
+    class Robot {
+        public $name;
+        private static $names = [];
+
+        public function __construct() {
+            $this->reset();
+        }
+
+        public function getName(): string {
+            return $this->name;
+        }
+
+        public function reset(): void {
+            $letters = range('A', 'Z');
+            $this->name = $letters[rand(0, 25)] . $letters[rand(0, 25)] . rand(100, 999);
+
+            if (in_array($this->name, self::$names)) {
+                $this->reset();
+            } else {
+                self::$names[] = $this->name;
+            }
+        }
     }
-    
+
 ?>
