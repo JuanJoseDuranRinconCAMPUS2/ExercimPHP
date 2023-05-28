@@ -2,86 +2,46 @@
     //values for example
     declare(strict_types=1);
 
-    class Robot
+function encode(string $input): string
     {
-        const DIRECTION_NORTH = 'NORTH';
-        const DIRECTION_EAST ='EAST';
-        const DIRECTION_SOUTH = 'SOUTH';
-        const DIRECTION_WEST = 'WEST';
-        /**
-         *
-         * @var int[]
-         */
-        public $position;
-        /**
-         *
-         * @var string
-         */
-        public $direction;
-    
-        public function __construct(array $position, string $direction) {
-            $this->position = $position;
-            $this->direction = $direction;
-        }
-    
-        public function turnRight(): self {
-            $directions = [
-                self::DIRECTION_NORTH => self::DIRECTION_EAST,
-                self::DIRECTION_EAST => self::DIRECTION_SOUTH,
-                self::DIRECTION_SOUTH => self::DIRECTION_WEST,
-                self::DIRECTION_WEST => self::DIRECTION_NORTH
-            ];
-            $this->direction = $directions[$this->direction];
-            return $this;
-        }
-    
-        public function turnLeft(): self {
-            $directions = [
-                self::DIRECTION_NORTH => self::DIRECTION_WEST,
-                self::DIRECTION_WEST => self::DIRECTION_SOUTH,
-                self::DIRECTION_SOUTH => self::DIRECTION_EAST,
-                self::DIRECTION_EAST => self::DIRECTION_NORTH
-            ];
-            $this->direction = $directions[$this->direction];
-            return $this;
-        }
-    
-        public function advance(): self {
-            switch ($this->direction) {
-                case self::DIRECTION_NORTH:
-                    $this->position[1]++;
-                    break;
-                case self::DIRECTION_EAST:
-                    $this->position[0]++;
-                    break;
-                case self::DIRECTION_SOUTH:
-                    $this->position[1]--;
-                    break;
-                case self::DIRECTION_WEST:
-                    $this->position[0]--;
-                    break;
-            }
-            return $this;
-        }
-    
-        public function instructions(string $inst): void {
-            for ($i = 0; $i < strlen($inst); $i++) {
-                switch ($inst[$i]) {
-                    case 'R':
-                        $this->turnRight();
-                        break;
-                    case 'L':
-                        $this->turnLeft();
-                        break;
-                    case 'A':
-                        $this->advance();
-                        break;
-                    default:
-                        throw new InvalidArgumentException();
-                        break;
-                }
+        $encoded = '';
+        $length = strlen($input);
+        $count = 1;
+
+        for ($i = 0; $i < $length; $i++) {
+            $currentChar = $input[$i];
+            $nextChar = ($i + 1 < $length) ? $input[$i + 1] : '';
+
+            if ($currentChar === $nextChar) {
+                $count++;
+            } else {
+                $encoded .= ($count > 1 ? $count : '') . $currentChar;
+                $count = 1;
             }
         }
+
+        return $encoded;
+    }
+
+function decode(string $input): string
+    {
+        $decoded = '';
+        $length = strlen($input);
+        $count = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $currentChar = $input[$i];
+
+            if (ctype_digit($currentChar)) {
+                $count .= $currentChar;
+            } else {
+                $repeatCount = ($count !== '' ? intval($count) : 1);
+                $decoded .= str_repeat($currentChar, $repeatCount);
+                $count = '';
+            }
+        }
+
+        return $decoded;
     }
 
 ?>
