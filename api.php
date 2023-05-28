@@ -2,20 +2,41 @@
     //values for example
     declare(strict_types=1);
 
-    function squareOfSum(int $max): int
-    {
-        $sum = $max * ($max +1)/ 2;
-        return $sum * $sum;
+    class School
+{
+    private $students = [];
+
+    public function numberOfStudents(): int {
+        return count($this->students);
     }
 
-    function sumOfSquares(int $max): int
-    {
-        return $max * ($max + 1) * (2 * $max + 1)/ 6;
+    public function add(string $name, int $grade): void {
+        $this->students[$name] = $grade;
     }
 
-    function difference(int $max): int
-    {
-        return squareOfSum($max) - sumOfSquares($max);
+    public function grade(int $grade): array {
+        $result = [];
+        foreach ($this->students as $name => $studentGrade) {
+            if ($studentGrade === $grade) {
+                $result[] = $name;
+            }
+        }
+        sort($result);
+        return $result;
     }
+
+    public function studentsByGradeAlphabetical(): array {
+        $result = [];
+        $grades = array_unique(array_values($this->students));
+        sort($grades);
+
+        foreach ($grades as $grade) {
+            $result[$grade] = $this->grade($grade);
+        }
+
+        return $result;
+    }
+}
+
 
 ?>
