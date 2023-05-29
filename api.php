@@ -2,13 +2,13 @@
     //values for example
     declare(strict_types=1);
 
-    function accumulate(array $input, callable $accumulator): array
+    function acronym(string $text): string
     {
-        $result = [];
-        foreach ($input as $value) {
-            $result[] = $accumulator($value);
+        if (str_word_count($text) === 1) {
+            return '';
         }
-        return $result;
+        preg_match_all('/^\D|(?<!\p{Lu})(\p{Lu})|(?<=[ -])(\p{Ll})/u', $text, $matches);
+        return mb_strtoupper(implode('',$matches[0]));
     }
 
 ?>
